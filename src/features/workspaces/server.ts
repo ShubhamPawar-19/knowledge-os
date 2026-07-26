@@ -1,27 +1,16 @@
-import { WorkspaceRole } from "@prisma/client";
-import { slugify } from "./slug";
-import { db } from "@/src/server/db";
+import { TRPCError } from "@trpc/server";
 
-export async function createPersonalWorkspace(
-  user: {
-    id: string;
-    name: string;
-  },
-) {
-  const workspace = await db.workspace.create({
-    data: {
-      name: `${user.name}'s Workspace`,
-      slug: slugify(`${user.name}-${user.id}`),
-      ownerId: user.id,
+import { getCurrentWorkspace } from "./queries";
 
-      members: {
-        create: {
-          userId: user.id,
-          role: WorkspaceRole.OWNER,
-        },
-      },
-    },
-  });
+export async function requireCurrentWorkspace(userId: string) {
+  const workspace = await getCurrentWorkspace(userId);
+
+  if (!workspace) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Workspace not found.",
+    });
+  }
 
   return workspace;
 }

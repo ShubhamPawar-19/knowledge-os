@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { getCurrentSession } from "@/src/lib/auth-session";
-import { AppShell } from "@/src/components/layout/app-shell";
+import { AppShell } from "@/components/layout/app-shell";
 import { getCurrentWorkspace } from "@/src/features/workspaces/queries";
 import { TRPCProvider } from "../providers/trpc-provider";
 

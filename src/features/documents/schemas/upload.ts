@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 export const uploadDocumentSchema = z.object({
-  workspaceId: z.string().cuid(),
+  file: z.instanceof(File),
 });
 
-export type UploadDocumentInput = z.infer<typeof uploadDocumentSchema>;
+export type UploadDocumentSchema = z.infer<
+  typeof uploadDocumentSchema
+>;
