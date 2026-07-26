@@ -1,4 +1,3 @@
-import { LogoutButton } from "@/components/ui/layout/logout-button";
 
 export default function DashboardPage() {
   return (

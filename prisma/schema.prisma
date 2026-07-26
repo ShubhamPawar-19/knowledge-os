@@ -32,6 +32,13 @@ enum WorkspaceRole {
   MEMBER
 }
 
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+}
+
 model Session {
   id        String   @id
   expiresAt DateTime
@@ -94,7 +101,8 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  members WorkspaceMember[]
+  members   WorkspaceMember[]
+  documents Document[]
 }
 
 model WorkspaceMember {
@@ -113,4 +121,30 @@ model WorkspaceMember {
   @@unique([workspaceId, userId])
   @@index([workspaceId])
   @@index([userId])
+}
+
+model Document {
+  id String @id @default(cuid())
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  name         String
+  originalName String
+
+  mimeType String
+  extension String
+
+  size Int
+
+  storageKey String
+
+  status DocumentStatus @default(UPLOADED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workspaceId])
+  @@index([status])
+  @@index([createdAt])
 }
