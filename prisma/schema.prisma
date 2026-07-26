@@ -127,19 +127,21 @@ model Document {
   id String @id @default(cuid())
 
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  name         String
+  name String
   originalName String
 
   mimeType String
-  extension String
+  extension String?
 
   size Int
 
-  storageKey String
+  storageKey String @unique
 
   status DocumentStatus @default(UPLOADED)
+
+  errorMessage String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
