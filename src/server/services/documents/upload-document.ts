@@ -9,10 +9,10 @@ import { requireCurrentWorkspace } from "@/src/features/workspaces/server";
 import { db } from "../../db";
 
 export async function uploadDocument({
-  userId,
+  workspaceId,
   file,
 }: UploadDocumentInput) {
-  const workspace = await requireCurrentWorkspace(userId);
+  const workspace = await requireCurrentWorkspace(workspaceId);
 
   validateFile(file);
 

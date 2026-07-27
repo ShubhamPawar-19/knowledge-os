@@ -103,6 +103,7 @@ model Workspace {
 
   members   WorkspaceMember[]
   documents Document[]
+  chunks    DocumentChunk[]   @relation("WorkspaceChunks")
 }
 
 model WorkspaceMember {
@@ -127,12 +128,16 @@ model Document {
   id String @id @default(cuid())
 
   workspaceId String
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  name String
+  sourceType DocumentSourceType @default(PDF)
+
+  chunks DocumentChunk[]
+
+  name         String
   originalName String
 
-  mimeType String
+  mimeType  String
   extension String?
 
   size Int
@@ -143,10 +148,50 @@ model Document {
 
   errorMessage String?
 
+  chunkCount Int @default(0)
+
+  processedAt DateTime?
+
+  processingStartedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([workspaceId])
-  @@index([status])
+  @@index([workspaceId, status])
   @@index([createdAt])
+}
+
+model DocumentChunk {
+  id String @id @default(cuid())
+
+  documentId  String
+  workspaceId String
+
+  document  Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation("WorkspaceChunks", fields: [workspaceId], references: [id], onDelete: Cascade)
+  content   String
+
+  chunkIndex Int
+
+  tokenCount Int
+
+  metadata Json?
+
+  // OpenAI text-embedding-3-small (1536 dimensions)
+  embedding Unsupported("vector(1536)")
+
+  createdAt DateTime @default(now())
+
+  @@unique([documentId, chunkIndex])
+  @@index([documentId])
+  @@index([workspaceId])
+  @@index([workspaceId, documentId])
+}
+
+enum DocumentSourceType {
+  PDF
+  MARKDOWN
+  WEBSITE
+  NOTION
+  TEXT
 }

@@ -11,8 +11,6 @@ export function UserNav({
   return (
     <>
       <p>{user.name}</p>
-      <p>{user.email}</p>
-
       <LogoutButton />
     </>
   );
