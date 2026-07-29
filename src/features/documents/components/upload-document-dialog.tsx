@@ -11,8 +11,8 @@ import { DocumentDropzone } from "./document-dropzone";
 import { useState } from "react";
 import { useUploadDocument } from "../hooks/use-upload-document";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface UploadDocumentDialogProps {
   open: boolean;
@@ -30,6 +30,9 @@ export function UploadDocumentDialog({
 
   const { upload } = useUploadDocument();
 
+  const router = useRouter();
+
+
   const handleUpload = async () => {
     if (!file) return;
 
@@ -43,7 +46,7 @@ export function UploadDocumentDialog({
     } finally {
       setIsUploading(false);
     }
-    const router = useRouter();
+    router.refresh();
   };
 
   return (

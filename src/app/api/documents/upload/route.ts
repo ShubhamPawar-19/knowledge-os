@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     }
 
     const document = await uploadDocument({
-      userId: session.user.id,
+      workspaceId: session.user.id,
       file,
     });
 

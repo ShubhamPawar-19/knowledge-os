@@ -3,6 +3,7 @@ import { auth } from "@/src/server/auth";
 import { getWorkspaceDocuments } from "@/src/features/documents/server";
 import { EmptyState } from "@/src/features/documents/components/empty-state";
 import { DocumentGrid } from "@/src/features/documents/components/document-grid";
+import { DocumentsPolling } from "@/src/features/documents/components/polling";
 
 export default async function DocumentsPage() {
   const session = await auth.api.getSession({
@@ -16,6 +17,9 @@ export default async function DocumentsPage() {
   const documents = await getWorkspaceDocuments(
     session.user.id
   );
+  const hasProcessing = documents.some(
+  (doc) => doc.status === "PROCESSING",
+);
 
   return (
     <div className="space-y-6">
@@ -28,7 +32,7 @@ export default async function DocumentsPage() {
           Manage your knowledge base.
         </p>
       </div>
-
+      <DocumentsPolling hasProcessing={hasProcessing} />
       {documents.length === 0 ? (
         <EmptyState />
       ) : (
