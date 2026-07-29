@@ -177,8 +177,7 @@ model DocumentChunk {
 
   metadata Json?
 
-  // OpenAI text-embedding-3-small (1536 dimensions)
-  embedding Unsupported("vector(1536)")
+  embedding Unsupported("vector(3072)")
 
   createdAt DateTime @default(now())
 

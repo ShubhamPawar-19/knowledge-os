@@ -8,6 +8,9 @@ import { uploadFile } from "@/src/lib/storage/upload";
 import { requireCurrentWorkspace } from "@/src/features/workspaces/server";
 import { db } from "../../db";
 
+import { inngest } from "../../inngest/client";
+import { InngestEvents } from "../../inngest/events";
+
 export async function uploadDocument({
   workspaceId,
   file,
@@ -48,6 +51,17 @@ export async function uploadDocument({
       status: DocumentStatus.UPLOADED,
     },
   });
+
+  try {
+    await inngest.send({
+      name: InngestEvents.PROCESS_DOCUMENT,
+      data: {
+        documentId: document.id,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to enqueue document processing:", error);
+  }
 
   return document;
 }
