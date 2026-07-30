@@ -104,6 +104,7 @@ model Workspace {
   members   WorkspaceMember[]
   documents Document[]
   chunks    DocumentChunk[]   @relation("WorkspaceChunks")
+  conversations Conversation[]
 }
 
 model WorkspaceMember {
@@ -193,4 +194,41 @@ enum DocumentSourceType {
   WEBSITE
   NOTION
   TEXT
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model Conversation {
+  id          String    @id @default(cuid())
+  title       String    @default("New Chat")
+  workspaceId String
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages    Message[]
+
+  @@index([workspaceId, updatedAt])
+}
+
+model Message {
+  id             String         @id @default(cuid())
+  conversationId String
+
+  role           MessageRole
+  content        String
+  citations      Json?
+
+  createdAt      DateTime       @default(now())
+
+  conversation   Conversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([createdAt])
 }
