@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/src/lib/auth-session";
 import { AppShell } from "@/components/layout/app-shell";
 import { getCurrentWorkspace } from "@/src/features/workspaces/queries";
-import { TRPCProvider } from "../providers/trpc-provider";
+import { Providers } from "@/src/trpc/provider";
 
 export default async function DashboardLayout({
     children,
@@ -26,13 +26,15 @@ export default async function DashboardLayout({
         redirect("/login");
     }
 
-    return <AppShell
-        user={session.user}
-        workspace={workspace}
+    return (
+  <Providers>
+    <AppShell
+      user={session.user}
+      workspace={workspace}
     >
-        <TRPCProvider>
-            {children}
-        </TRPCProvider>
-    </AppShell>;
+      {children}
+    </AppShell>
+  </Providers>
+);
 
 }
