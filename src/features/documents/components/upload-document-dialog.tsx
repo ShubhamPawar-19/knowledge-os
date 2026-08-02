@@ -6,11 +6,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/src/components/ui/dialog";
 import { DocumentDropzone } from "./document-dropzone";
 import { useState } from "react";
 import { useUploadDocument } from "../hooks/use-upload-document";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 

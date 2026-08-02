@@ -1,13 +1,13 @@
 import { createPersonalWorkspace } from "@/src/features/workspaces/mutations";
-import { PrismaClient } from "@prisma/client";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-const prisma = new PrismaClient();
+import { db } from "../db";
+
 
 export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
+  database: prismaAdapter(db, {
+  provider: "postgresql",
+}),
   emailAndPassword: {
     enabled: true,
   },

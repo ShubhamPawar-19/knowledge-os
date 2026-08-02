@@ -1,5 +1,5 @@
 import { NewChatButton } from "@/src/features/chat/components/new-chat-button";
-import { ChatSidebar } from "../../src/features/chat/components/chat-sidebar";
+import { ChatSidebar } from "../../features/chat/components/chat-sidebar";
 import { Logo } from "./logo";
 import { Navigation } from "./navigation";
 import { UserNav } from "./user-nav";
