@@ -1,12 +1,13 @@
-import { google } from "@ai-sdk/google";
 import { embed, embedMany } from "ai";
+
+import { embeddingModel } from "../models";
 
 export async function generateEmbedding(
   text: string,
 ): Promise<number[]> {
   const { embedding } = await embed({
-    model: google.textEmbeddingModel("gemini-embedding-001"),
-    value: text,
+    model: embeddingModel,
+    value: text.trim(),
   });
 
   return embedding;
@@ -15,9 +16,17 @@ export async function generateEmbedding(
 export async function generateEmbeddings(
   texts: string[],
 ): Promise<number[][]> {
+  const cleanedTexts = texts
+    .map((text) => text.trim())
+    .filter(Boolean);
+
+  if (cleanedTexts.length === 0) {
+    return [];
+  }
+
   const { embeddings } = await embedMany({
-    model: google.textEmbeddingModel("gemini-embedding-001"),
-    values: texts,
+    model: embeddingModel,
+    values: cleanedTexts,
   });
 
   return embeddings;

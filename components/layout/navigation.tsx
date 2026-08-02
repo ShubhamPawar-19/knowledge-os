@@ -10,7 +10,7 @@ export function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-col gap-1">
+    <nav className="flex flex-col gap-1 ">
       {navigation.map((item) => {
         const Icon = item.icon;
 

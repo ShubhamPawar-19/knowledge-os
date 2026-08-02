@@ -7,8 +7,11 @@ export async function saveChunks(
   workspaceId: string,
   chunks: EmbeddedChunk[],
 ): Promise<void> {
+  if (chunks.length === 0) {
+    return;
+  }
+
   await db.$transaction(async (tx) => {
-    // Remove old chunks (for retries/reprocessing)
     await tx.documentChunk.deleteMany({
       where: {
         documentId,
@@ -20,31 +23,31 @@ export async function saveChunks(
 
       await tx.$executeRawUnsafe(
         `
-  INSERT INTO "DocumentChunk"
-  (
-    id,
-    "documentId",
-    "workspaceId",
-    content,
-    "chunkIndex",
-    "tokenCount",
-    metadata,
-    embedding,
-    "createdAt"
-  )
-  VALUES
-  (
-    gen_random_uuid()::text,
-    $1,
-    $2,
-    $3,
-    $4,
-    $5,
-    $6::jsonb,
-    $7::vector,
-    NOW()
-  )
-  `,
+        INSERT INTO "DocumentChunk"
+        (
+          id,
+          "documentId",
+          "workspaceId",
+          content,
+          "chunkIndex",
+          "tokenCount",
+          metadata,
+          embedding,
+          "createdAt"
+        )
+        VALUES
+        (
+          gen_random_uuid()::text,
+          $1,
+          $2,
+          $3,
+          $4,
+          $5,
+          $6::jsonb,
+          $7::vector,
+          NOW()
+        )
+        `,
         documentId,
         workspaceId,
         chunk.content,
