@@ -28,7 +28,7 @@ export function NewChatButton({
 
   return (
     <Button
-      className="w-full"
+      className="w-full gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
       disabled={loading}
       onClick={handleClick}
     >

@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
+import type { UIMessage } from "ai";
 
 import { getConversation } from "@/src/features/chat/queries/get-conversation";
+
+import { ChatHeader } from "@/src/features/chat/components/chat-header";
+import { Chat } from "@/src/features/chat/components/chat";
 
 interface Props {
   params: Promise<{
@@ -19,26 +23,30 @@ export default async function ConversationPage({
     notFound();
   }
 
+  const initialMessages: UIMessage[] =
+    conversation.messages.map((message) => ({
+      id: message.id,
+      role:
+        message.role === "USER"
+          ? "user"
+          : "assistant",
+      parts: [
+        {
+          type: "text",
+          text: message.content,
+        },
+      ],
+    }));
+
   return (
-    <div className="flex h-full flex-col">
-      <h1 className="border-b p-6 text-xl font-semibold">
-        {conversation.title}
-      </h1>
+    <div className="flex h-full min-h-0 flex-col">
+      <ChatHeader title={conversation.title} />
 
-      <div className="flex-1 p-6">
-        {conversation.messages.length === 0 ? (
-          <p className="text-muted-foreground">
-            Start a conversation...
-          </p>
-        ) : (
-          conversation.messages.map((message) => (
-            <div key={message.id}>
-              <strong>{message.role}</strong>
-
-              <p>{message.content}</p>
-            </div>
-          ))
-        )}
+      <div className="min-h-0 flex-1">
+        <Chat
+          conversationId={conversation.id}
+          initialMessages={initialMessages}
+        />
       </div>
     </div>
   );

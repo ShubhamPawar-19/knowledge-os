@@ -14,11 +14,7 @@ export async function ChatSidebar({
 
   return (
     <>
-      <div className="border-b p-4">
-        <NewChatButton workspaceId={workspaceId} />
-      </div>
-
-      <ConversationList conversations={conversations} />
+        <ConversationList conversations={conversations} />
     </>
   );
 }
