@@ -1,7 +1,7 @@
 import { DocumentStatus } from "@prisma/client";
 import { Loader2, CheckCircle2, CircleDashed, XCircle } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/src/components/ui/badge";
 
 interface DocumentStatusBadgeProps {
   status: DocumentStatus;

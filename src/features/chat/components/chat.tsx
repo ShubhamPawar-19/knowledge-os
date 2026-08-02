@@ -8,8 +8,8 @@ import {
 import { useChat } from "@ai-sdk/react";
 import { ArrowUp, Square } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/src/components/ui/button";
+import { Textarea } from "@/src/components/ui/textarea";
 
 interface Props {
   conversationId: string;

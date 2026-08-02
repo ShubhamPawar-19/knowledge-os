@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 
 import { useCreateConversation } from "../hooks/use-create-conversation";
 

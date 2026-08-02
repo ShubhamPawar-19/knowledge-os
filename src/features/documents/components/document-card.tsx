@@ -3,13 +3,13 @@
 import { Document } from "@prisma/client";
 import { FileText, Trash2 } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/src/components/ui/card";
+import { Button } from "@/src/components/ui/button";
 
 import { useDeleteDocument } from "../hooks/use-delete-document";
 import { useState } from "react";
 import { DeleteDocumentDialog } from "./delete-document-dialog";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/src/components/ui/badge";
 import { DocumentStatusBadge } from "./document-status-badge";
 
 interface DocumentCardProps {
