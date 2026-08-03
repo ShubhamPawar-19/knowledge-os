@@ -18,7 +18,7 @@ export const navigation = [
   },
   {
     title: "Chats",
-    href: "/chat",
+    href: "/chats",
     icon: MessageSquare,
   },
   {

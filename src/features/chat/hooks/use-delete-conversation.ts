@@ -1,12 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 
 import { trpcClient } from "@/src/trpc/client";
 
 export function useDeleteConversation() {
   const router = useRouter();
+  const pathname = usePathname();
 
   async function remove(conversationId: string) {
     try {
@@ -16,7 +17,13 @@ export function useDeleteConversation() {
 
       toast.success("Conversation deleted.");
 
-      router.push("/dashboard/chat");
+      const currentConversationId =
+        pathname.split("/").pop();
+
+      if (currentConversationId === conversationId) {
+        router.push("/dashboard/chat");
+      }
+
       router.refresh();
     } catch (error) {
       console.error(error);

@@ -1,17 +1,68 @@
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { google } from "@ai-sdk/google";
+import {
+  createOpenRouter,
+} from "@openrouter/ai-sdk-provider";
 
-const openrouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY!,
-});
+import {
+  createGoogleGenerativeAI,
+} from "@ai-sdk/google";
 
-export const chatModel = openrouter.chat(
-  "google/gemma-3-27b-it",
-);
+import {
+  createOpenAI,
+} from "@ai-sdk/openai";
 
-export const titleModel = openrouter.chat(
-  "google/gemma-3-4b-it",
-);
+import {
+  AIProvider,
+} from "@prisma/client";
+import { getProviderApiKey } from "@/src/features/settings/actions/api-keys";
 
-export const embeddingModel =
-  google.textEmbeddingModel("gemini-embedding-001");
+
+
+export async function getChatModel(
+  userId: string,
+  provider: AIProvider,
+  model: string,
+) {
+
+  const apiKey =
+    await getProviderApiKey(
+      userId,
+      provider,
+    );
+
+
+  if (!apiKey) {
+    throw new Error(
+      `Missing API key for ${provider}`,
+    );
+  }
+
+
+  switch(provider) {
+
+    case AIProvider.OPENROUTER:
+      return createOpenRouter({
+        apiKey,
+      }).chat(model);
+
+
+
+    case AIProvider.GOOGLE:
+      return createGoogleGenerativeAI({
+        apiKey,
+      }).languageModel(model);
+
+
+
+    case AIProvider.OPENAI:
+      return createOpenAI({
+        apiKey,
+      }).chat(model);
+
+
+
+    default:
+      throw new Error(
+        `Unsupported chat provider ${provider}`,
+      );
+  }
+}

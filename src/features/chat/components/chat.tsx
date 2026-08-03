@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";import { useRouter } from "next/navigation";
 import {
   DefaultChatTransport,
   type UIMessage,
@@ -24,6 +27,8 @@ export function Chat({
   const router = useRouter();
 
   const [input, setInput] = useState("");
+  const bottomRef =
+  useRef<HTMLDivElement>(null);
   const [hasRefreshed, setHasRefreshed] =
     useState(false);
 
@@ -64,6 +69,12 @@ export function Chat({
     router,
   ]);
 
+  useEffect(() => {
+  bottomRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+}, [messages, status]);
+
   async function onSubmit(
     e: React.FormEvent<HTMLFormElement>,
   ) {
@@ -75,12 +86,13 @@ export function Chat({
     ) {
       return;
     }
+const text = input;
 
-    await sendMessage({
-      text: input,
-    });
+setInput("");
 
-    setInput("");
+await sendMessage({
+  text,
+});
   }
 
   return (
@@ -118,6 +130,7 @@ export function Chat({
             </div>
           ))
         )}
+        <div ref={bottomRef} />
       </div>
 
       <form

@@ -22,6 +22,9 @@ model User {
   ownedWorkspaces Workspace[]       @relation("WorkspaceOwner")
   memberships     WorkspaceMember[]
 
+  aiConfig UserAIConfig?
+  apiKeys  UserAPIKey[]
+
   @@unique([email])
   @@map("user")
 }
@@ -88,7 +91,7 @@ model Verification {
 }
 
 model Workspace {
-  id   String @id @default(cuid())
+  id String @id @default(cuid())
 
   name String
   slug String @unique
@@ -97,14 +100,14 @@ model Workspace {
   description String?
 
   ownerId String
-  owner   User @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  owner   User   @relation("WorkspaceOwner", fields: [ownerId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  members      WorkspaceMember[]
-  documents    Document[]
-  chunks       DocumentChunk[] @relation("WorkspaceChunks")
+  members       WorkspaceMember[]
+  documents     Document[]
+  chunks        DocumentChunk[]   @relation("WorkspaceChunks")
   conversations Conversation[]
 
   @@index([ownerId])
@@ -206,34 +209,84 @@ enum MessageRole {
 }
 
 model Conversation {
-  id          String    @id @default(cuid())
-  title       String    @default("New Chat")
+  id    String @id @default(cuid())
+  title String @default("New Chat")
 
   titleGenerated Boolean @default(false)
 
   workspaceId String
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  messages    Message[]
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages  Message[]
 
   @@index([workspaceId, updatedAt])
 }
+
 model Message {
-  id             String         @id @default(cuid())
+  id             String @id @default(cuid())
   conversationId String
 
-  role           MessageRole
-  content        String
-  citations      Json?
+  role      MessageRole
+  content   String
+  citations Json?
 
-  createdAt      DateTime       @default(now())
+  createdAt DateTime @default(now())
 
-  conversation   Conversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([conversationId])
   @@index([createdAt])
+}
+
+enum AIProvider {
+  OPENAI
+  OPENROUTER
+  GOOGLE
+  ANTHROPIC
+  VOYAGE
+  COHERE
+  OLLAMA
+}
+
+model UserAIConfig {
+  id String @id @default(cuid())
+
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Chat
+  chatProvider AIProvider @default(OPENROUTER)
+  chatModel    String     @default("google/gemma-3-27b-it")
+
+  // Embeddings
+  embeddingProvider AIProvider @default(GOOGLE)
+  embeddingModel    String     @default("gemini-embedding-001")
+
+  temperature Float @default(0.7)
+  maxTokens   Int   @default(2048)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserAPIKey {
+  id String @id @default(cuid())
+
+  userId   String
+  provider AIProvider
+
+  encryptedKey String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@index([userId])
 }
