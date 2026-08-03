@@ -6,7 +6,11 @@ const openrouter = createOpenRouter({
 });
 
 export const chatModel = openrouter.chat(
-  "google/gemma-3-27b-it"
+  "google/gemma-3-27b-it",
+);
+
+export const titleModel = openrouter.chat(
+  "google/gemma-3-4b-it",
 );
 
 export const embeddingModel =

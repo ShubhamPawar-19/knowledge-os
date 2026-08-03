@@ -11,3 +11,11 @@ export type CreateConversationInput = z.infer<
 export const listConversationsSchema = z.object({
   workspaceId: z.string().cuid(),
 });
+
+export const deleteConversationSchema = z.object({
+  conversationId: z.string().cuid(),
+});
+
+export type DeleteConversationInput = z.infer<
+  typeof deleteConversationSchema
+>;

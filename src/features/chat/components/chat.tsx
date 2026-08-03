@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   DefaultChatTransport,
   type UIMessage,
@@ -20,7 +21,11 @@ export function Chat({
   conversationId,
   initialMessages,
 }: Props) {
+  const router = useRouter();
+
   const [input, setInput] = useState("");
+  const [hasRefreshed, setHasRefreshed] =
+    useState(false);
 
   const {
     messages,
@@ -37,6 +42,27 @@ export function Chat({
       },
     }),
   });
+
+  useEffect(() => {
+    if (
+      hasRefreshed ||
+      initialMessages.length !== 0 ||
+      status !== "ready" ||
+      messages.length < 2
+    ) {
+      return;
+    }
+
+    setHasRefreshed(true);
+
+    router.refresh();
+  }, [
+    status,
+    messages.length,
+    initialMessages.length,
+    hasRefreshed,
+    router,
+  ]);
 
   async function onSubmit(
     e: React.FormEvent<HTMLFormElement>,
@@ -75,8 +101,9 @@ export function Chat({
 
               {message.parts.map(
                 (part, index) => {
-                  if (part.type !== "text")
+                  if (part.type !== "text") {
                     return null;
+                  }
 
                   return (
                     <p
