@@ -1,10 +1,14 @@
 import Link from "next/link";
-import { Plus, Upload } from "lucide-react";
+import {
+  ArrowRight,
+  Plus,
+  Upload,
+} from "lucide-react";
 
-import { Button } from "@/src/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
@@ -14,21 +18,57 @@ export function QuickActions() {
     <Card>
       <CardHeader>
         <CardTitle>Quick Actions</CardTitle>
+
+        <CardDescription>
+          Frequently used workspace actions.
+        </CardDescription>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3 sm:flex-row">
-        <Link href="/dashboard/chat/new" className="flex-1">
-          <Button className="w-full">
-            <Plus className="mr-2 h-4 w-4" />
-            New Chat
-          </Button>
+      <CardContent className="grid gap-4 md:grid-cols-2">
+        <Link
+          href="/dashboard/chat/new"
+          className="group hover:border-primary/30 hover:bg-muted/50 rounded-xl border p-5 transition-all duration-200 hover:-translate-y-1"
+        >
+          <div className="flex items-start justify-between">
+            <div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-xl">
+              <Plus className="h-5 w-5" />
+            </div>
+
+            <ArrowRight className="text-muted-foreground h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </div>
+
+          <div className="mt-5">
+            <h3 className="font-semibold">
+              New Conversation
+            </h3>
+
+            <p className="text-muted-foreground mt-1 text-sm">
+              Start chatting with your knowledge base.
+            </p>
+          </div>
         </Link>
 
-        <Link href="/dashboard/documents" className="flex-1">
-          <Button variant="outline" className="w-full">
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Document
-          </Button>
+        <Link
+          href="/dashboard/documents"
+          className="group hover:border-primary/30 hover:bg-muted/50 rounded-xl border p-5 transition-all duration-200 hover:-translate-y-1"
+        >
+          <div className="flex items-start justify-between">
+            <div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-xl">
+              <Upload className="h-5 w-5" />
+            </div>
+
+            <ArrowRight className="text-muted-foreground h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </div>
+
+          <div className="mt-5">
+            <h3 className="font-semibold">
+              Upload Documents
+            </h3>
+
+            <p className="text-muted-foreground mt-1 text-sm">
+              Add new knowledge for AI-powered search.
+            </p>
+          </div>
         </Link>
       </CardContent>
     </Card>

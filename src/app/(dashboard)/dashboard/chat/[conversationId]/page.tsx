@@ -40,7 +40,10 @@ export default async function ConversationPage({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <ChatHeader title={conversation.title} />
+      <ChatHeader
+        conversationId={conversation.id}
+        title={conversation.title}
+      />
 
       <div className="min-h-0 flex-1">
         <Chat

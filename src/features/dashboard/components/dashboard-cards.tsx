@@ -1,8 +1,8 @@
 import {
-  FileText,
   Database,
-  MessageSquare,
+  FileText,
   HardDrive,
+  MessageSquare,
 } from "lucide-react";
 
 import { DashboardStats } from "../types";
@@ -21,25 +21,29 @@ export function DashboardCards({
       <StatsCard
         title="Documents"
         value={stats.documents}
-        icon={<FileText className="text-muted-foreground h-4 w-4" />}
+        description="Knowledge sources uploaded"
+        icon={<FileText className="h-5 w-5" />}
       />
 
       <StatsCard
-        title="Chunks"
-        value={stats.chunks}
-        icon={<Database className="text-muted-foreground h-4 w-4" />}
-      />
-
-      <StatsCard
-        title="Chats"
+        title="Conversations"
         value={stats.chats}
-        icon={<MessageSquare className="text-muted-foreground h-4 w-4" />}
+        description="AI chat sessions"
+        icon={<MessageSquare className="h-5 w-5" />}
+      />
+
+      <StatsCard
+        title="Indexed Chunks"
+        value={stats.chunks}
+        description="Searchable knowledge"
+        icon={<Database className="h-5 w-5" />}
       />
 
       <StatsCard
         title="Storage"
         value={formatBytes(stats.storage)}
-        icon={<HardDrive className="text-muted-foreground h-4 w-4" />}
+        description="Workspace storage used"
+        icon={<HardDrive className="h-5 w-5" />}
       />
     </div>
   );

@@ -1,36 +1,69 @@
 import { generateText } from "ai";
-import { titleModel } from "@/src/server/ai/models";
+
 import { db } from "@/src/server/db";
-import { chatModel } from "@/src/server/ai/models";
+import { getChatModel } from "@/src/server/ai/models";
+
 
 export class TitleService {
   static async generateConversationTitle(
+    userId: string,
     conversationId: string,
     firstMessage: string,
   ) {
     try {
-      const conversation = await db.conversation.findUnique({
-        where: {
-          id: conversationId,
-        },
-        select: {
-          title: true,
-        },
-      });
+
+      const conversation =
+        await db.conversation.findUnique({
+          where: {
+            id: conversationId,
+          },
+          select: {
+            title: true,
+          },
+        });
+
 
       if (!conversation) {
         return;
       }
 
+
       if (conversation.title !== "New Chat") {
         return;
       }
 
-      const { text } = await generateText({
-        model: titleModel,
-        temperature: 0,
-        maxOutputTokens: 20,
-        system: `
+
+      const config =
+        await db.userAIConfig.findUnique({
+          where: {
+            userId,
+          },
+        });
+
+
+      if (!config) {
+        return;
+      }
+
+
+      const model =
+        await getChatModel(
+          userId,
+          config.chatProvider,
+          config.chatModel,
+        );
+
+
+      const { text } =
+        await generateText({
+
+          model,
+
+          temperature: 0,
+
+          maxOutputTokens: 20,
+
+          system: `
 You generate concise conversation titles.
 
 Rules:
@@ -40,22 +73,41 @@ Rules:
 - Do not end with punctuation.
 - Return only the title.
 `,
-        prompt: firstMessage,
-      });
+
+          prompt: firstMessage,
+        });
+
+
 
       const title =
-        text.trim().replace(/^["']|["']$/g, "").slice(0, 80) || "New Chat";
+        text
+          .trim()
+          .replace(/^["']|["']$/g, "")
+          .slice(0, 80)
+          ||
+        "New Chat";
+
 
       await db.conversation.update({
+
         where: {
           id: conversationId,
         },
+
         data: {
           title,
         },
+
       });
-    } catch (error) {
-      console.error("Failed to generate conversation title:", error);
+
+
+    } catch(error){
+
+      console.error(
+        "Failed to generate conversation title:",
+        error,
+      );
+
     }
   }
 }

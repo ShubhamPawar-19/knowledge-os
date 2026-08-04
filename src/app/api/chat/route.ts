@@ -5,9 +5,20 @@ import { db } from "@/src/server/db";
 import { ChatService } from "@/src/features/chat/server/services/chat.service";
 import { MessageService } from "@/src/features/chat/server/services/message.service";
 import { TitleService } from "@/src/features/chat/server/services/title.service";
+import { auth } from "@/src/server/auth";
+import { headers } from "next/headers";
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) {
+      return new Response("Unauthorized", {
+        status: 401,
+      });
+    }
     const body = await request.json();
 
     const { messages, conversationId } = body;
@@ -51,9 +62,10 @@ export async function POST(request: NextRequest) {
     );
 
     void TitleService.generateConversationTitle(
-      conversationId,
-      question,
-    );
+  session.user.id,
+  conversationId,
+  question,
+);
 
     const conversation = await db.conversation.findUnique({
       where: {
@@ -74,9 +86,10 @@ export async function POST(request: NextRequest) {
 
     try {
       result = await ChatService.streamResponse(
+        session.user.id,
         conversation.workspaceId,
         question,
-      );
+      )
     } catch (error) {
       console.error("Failed to generate AI response:", error);
 

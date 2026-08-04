@@ -1,37 +1,81 @@
 import { streamText } from "ai";
 
-import { chatModel } from "@/src/server/ai/models";
+import { db } from "@/src/server/db";
+
+import { getChatModel } from "@/src/server/ai/models";
 
 import { PromptBuilderService } from "./prompt-builder.service";
 import { RetrievalService } from "./retrieval.service";
 
+
 export class ChatService {
-  static async streamResponse(
+
+static async streamResponse(
+    userId: string,
     workspaceId: string,
     question: string,
-  ) {
-    const chunks = await RetrievalService.retrieve(
-      workspaceId,
-      question,
+) {
+
+
+const config =
+await db.userAIConfig.findUnique({
+    where:{
+        userId,
+    },
+});
+
+
+if(!config){
+    throw new Error(
+        "AI configuration missing"
     );
+}
 
-    const prompt = PromptBuilderService.build(
-      question,
-      chunks,
-    );
 
-    return streamText({
-      model: chatModel,
 
-      system:
-        "You are KnowledgeOS, an AI assistant that answers using uploaded documents whenever possible.",
+const chunks =
+await RetrievalService.retrieve(
+  userId,
+  workspaceId,
+  question,
+);
 
-      prompt,
 
-      temperature: 0.3,
 
-      // Prevent OpenRouter from requesting 65535 tokens
-      maxOutputTokens: 1024,
-    });
-  }
+const prompt =
+PromptBuilderService.build(
+    question,
+    chunks,
+);
+
+
+
+const model =
+await getChatModel(
+    userId,
+    config.chatProvider,
+    config.chatModel,
+);
+
+
+
+return streamText({
+
+    model,
+
+    system:
+    "You are KnowledgeOS AI assistant. Answer using uploaded documents.",
+
+    prompt,
+
+    temperature:
+    config.temperature,
+
+    maxOutputTokens:
+    config.maxTokens,
+
+});
+
+}
+
 }

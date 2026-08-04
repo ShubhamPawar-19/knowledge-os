@@ -1,5 +1,4 @@
 import { AppSidebar } from "./app-sidebar";
-import { AppHeader } from "./app-header";
 
 import type {
   DashboardUser,
@@ -26,8 +25,6 @@ export function AppShell({
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <AppHeader workspace={workspace} />
-
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
