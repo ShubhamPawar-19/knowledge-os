@@ -22,9 +22,6 @@ export default async function DashboardLayout({
     if (!workspace) {
         redirect("/login");
     }
-    if (!session) {
-        redirect("/login");
-    }
 
     return (
   <Providers>

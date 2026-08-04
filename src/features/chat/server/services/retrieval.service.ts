@@ -16,27 +16,32 @@ const DEFAULT_LIMIT = 5;
 
 export class RetrievalService {
   static async retrieve(
-    workspaceId: string,
-    question: string,
-    limit = DEFAULT_LIMIT,
-  ): Promise<RetrievedChunk[]> {
-    const embedding = await generateEmbedding(question);
-    const vector = `[${embedding.join(",")}]`;
+  userId: string,
+  workspaceId: string,
+  question: string,
+  limit = DEFAULT_LIMIT,
+): Promise<RetrievedChunk[]> {
+  const embedding = await generateEmbedding(
+    userId,
+    question,
+  );
 
-    const chunks = await db.$queryRaw<RetrievedChunk[]>`
-      SELECT
-        id,
-        "documentId",
-        content,
-        metadata,
-        1 - (embedding <=> ${vector}::vector) AS similarity
-      FROM "DocumentChunk"
-      WHERE "workspaceId" = ${workspaceId}
-        AND (1 - (embedding <=> ${vector}::vector)) > ${SIMILARITY_THRESHOLD}
-      ORDER BY embedding <=> ${vector}::vector
-      LIMIT ${limit};
-    `;
+  const vector = `[${embedding.join(",")}]`;
 
-    return chunks;
-  }
+  const chunks = await db.$queryRaw<RetrievedChunk[]>`
+    SELECT
+      id,
+      "documentId",
+      content,
+      metadata,
+      1 - (embedding <=> ${vector}::vector) AS similarity
+    FROM "DocumentChunk"
+    WHERE "workspaceId" = ${workspaceId}
+      AND (1 - (embedding <=> ${vector}::vector)) > ${SIMILARITY_THRESHOLD}
+    ORDER BY embedding <=> ${vector}::vector
+    LIMIT ${limit};
+  `;
+
+  return chunks;
+}
 }

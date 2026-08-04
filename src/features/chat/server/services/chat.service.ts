@@ -35,8 +35,9 @@ if(!config){
 
 const chunks =
 await RetrievalService.retrieve(
-    workspaceId,
-    question,
+  userId,
+  workspaceId,
+  question,
 );
 
 

@@ -1,12 +1,43 @@
 import { embed, embedMany } from "ai";
 
-import { embeddingModel } from "../models";
+import { db } from "@/src/server/db";
+import { getEmbeddingModel } from "../models";
+
+async function getUserEmbeddingModel(
+  userId: string,
+) {
+  const config = await db.userAIConfig.findUnique({
+    where: {
+      userId,
+    },
+    select: {
+      embeddingProvider: true,
+      embeddingModel: true,
+    },
+  });
+
+  if (!config) {
+    throw new Error(
+      "User AI configuration not found.",
+    );
+  }
+
+  return getEmbeddingModel(
+    userId,
+    config.embeddingProvider,
+    config.embeddingModel,
+  );
+}
 
 export async function generateEmbedding(
+  userId: string,
   text: string,
 ): Promise<number[]> {
+  const model =
+    await getUserEmbeddingModel(userId);
+
   const { embedding } = await embed({
-    model: embeddingModel,
+    model,
     value: text.trim(),
   });
 
@@ -14,6 +45,7 @@ export async function generateEmbedding(
 }
 
 export async function generateEmbeddings(
+  userId: string,
   texts: string[],
 ): Promise<number[][]> {
   const cleanedTexts = texts
@@ -24,8 +56,11 @@ export async function generateEmbeddings(
     return [];
   }
 
+  const model =
+    await getUserEmbeddingModel(userId);
+
   const { embeddings } = await embedMany({
-    model: embeddingModel,
+    model,
     values: cleanedTexts,
   });
 

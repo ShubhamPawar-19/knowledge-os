@@ -18,6 +18,7 @@ export default async function DashboardPage() {
           Welcome back! Here's an overview of your workspace.
         </p>
       </div>
+      <hr className="my-4 border-gray-200 font-extrabold" />
 
       <DashboardCards stats={data.stats} />
 
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
       </div>
 
       <QuickActions />
-      
+
     </div>
   );
 }
