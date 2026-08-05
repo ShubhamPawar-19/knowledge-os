@@ -1,18 +1,22 @@
 import { db } from "@/src/server/db";
 
-export async function getCurrentWorkspace(userId: string) {
-  return db.workspace.findFirst({
+export async function getCurrentWorkspace(
+  userId: string,
+) {
+  const user = await db.user.findUnique({
     where: {
-      members: {
-        some: {
-          userId,
+      id: userId,
+    },
+    select: {
+      activeWorkspace: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
         },
       },
     },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-    },
   });
+
+  return user?.activeWorkspace ?? null;
 }

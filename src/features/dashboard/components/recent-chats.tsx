@@ -26,8 +26,6 @@ export function RecentChats({
   chats,
 }: RecentChatsProps) {
   return (
-    <Link 
-    href="/chats/">
     <Card>
       <CardHeader>
         <CardTitle>Recent Conversations</CardTitle>
@@ -97,6 +95,5 @@ export function RecentChats({
         )}
       </CardContent>
     </Card>
-    </Link>
   );
 }

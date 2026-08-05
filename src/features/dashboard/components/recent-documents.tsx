@@ -38,7 +38,6 @@ export function RecentDocuments({
   documents,
 }: RecentDocumentsProps) {
   return (
-    <Link href="/documents/">
     <Card>
       <CardHeader>
         <CardTitle>Recent Documents</CardTitle>
@@ -47,7 +46,6 @@ export function RecentDocuments({
           Your latest uploaded knowledge sources.
         </CardDescription>
       </CardHeader>
-
       <CardContent>
         {documents.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
@@ -117,6 +115,5 @@ export function RecentDocuments({
         )}
       </CardContent>
     </Card>
-    </Link>
   );
 }

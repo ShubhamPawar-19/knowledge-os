@@ -1,37 +1,45 @@
 import { redirect } from "next/navigation";
 
-import { getCurrentSession } from "@/src/lib/auth-session";
 import { AppShell } from "@/src/components/layout/app-shell";
+import { getCurrentSession } from "@/src/lib/auth-session";
 import { getCurrentWorkspace } from "@/src/features/workspaces/queries";
+import { getUserWorkspaces } from "@/src/features/workspaces/queries/get-user-workspaces";
 import { Providers } from "@/src/trpc/provider";
 
 export default async function DashboardLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
+  const session = await getCurrentSession();
 
-    const session = await getCurrentSession();
+  if (!session) {
+    redirect("/login");
+  }
 
-    if (!session) {
-        redirect("/login");
-    }
+  const user = session.user;
 
-    const workspace = await getCurrentWorkspace(session.user.id);
+  const workspace = await getCurrentWorkspace(
+    user.id,
+  );
 
-    if (!workspace) {
-        redirect("/login");
-    }
+  if (!workspace) {
+    redirect("/workspace");
+  }
 
-    return (
-  <Providers>
-    <AppShell
-      user={session.user}
-      workspace={workspace}
-    >
-      {children}
-    </AppShell>
-  </Providers>
-);
+  const workspaces = await getUserWorkspaces(
+    user.id,
+  );
 
+  return (
+    <Providers>
+      <AppShell
+        user={user}
+        workspace={workspace}
+        workspaces={workspaces}
+      >
+        {children}
+      </AppShell>
+    </Providers>
+  );
 }
