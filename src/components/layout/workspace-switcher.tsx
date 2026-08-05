@@ -5,10 +5,11 @@ import {
   ChevronsUpDown,
   Plus,
   Settings,
+  Check,
 } from "lucide-react";
 
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 import type { DashboardWorkspace } from "@/src/types/dashboard";
 
 import {
@@ -17,21 +18,36 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
+import { switchWorkspace } from "@/src/features/workspaces/actions/switch-workspace";
 
 interface WorkspaceSwitcherProps {
   workspace: DashboardWorkspace;
+  workspaces: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
 }
-
 export function WorkspaceSwitcher({
   workspace,
+  workspaces,
 }: WorkspaceSwitcherProps) {
+  const router = useRouter();
+
+  async function handleWorkspaceSwitch(
+    workspaceId: string,
+  ) {
+    await switchWorkspace(workspaceId);
+
+    router.refresh();
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <button
+        <div
           className="
-            flex w-full items-center justify-between
-            rounded-lg border px-3 py-2
+            flex items-center justify-between
+            rounded-lg border px-3 py-2 gap-2
             text-sm font-medium
             transition-colors
             hover:bg-muted
@@ -47,8 +63,8 @@ export function WorkspaceSwitcher({
             </span>
           </div>
 
-          <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
-        </button>
+          <ChevronsUpDown className="h-4 w-4 text-muted-foreground " />
+        </div>
       </DropdownMenuTrigger>
 
 
@@ -56,35 +72,39 @@ export function WorkspaceSwitcher({
         align="start"
         className="w-64"
       >
-        {/* Current Workspace */}
+        {/* Current Workspaces */}
 
-        <DropdownMenuItem className="flex flex-col items-start gap-1">
-          <span className="font-medium">
-            {workspace.name}
-          </span>
+        {workspaces.map((item) => {
+          const isActive = item.id === workspace.id;
 
-          <span className="text-xs text-muted-foreground">
-            {workspace.slug}
-          </span>
-        </DropdownMenuItem>
+          return (
+            <DropdownMenuItem
+              key={item.id}
+              onClick={() => handleWorkspaceSwitch(item.id)}
+              className="flex items-center justify-between cursor-pointer"
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">
+                  {item.name}
+                </span>
 
+                <span className="text-xs text-muted-foreground">
+                  {item.slug}
+                </span>
+              </div>
 
-        {/* Manage */}
-        <DropdownMenuItem>
-          <Link href="/dashboard/settings">
-            <div className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Manage Workspace
-            </div>
-          </Link>
-        </DropdownMenuItem>
-
+              {item.id === workspace.id && (
+                <Check className="h-4 w-4 text-primary" />
+              )}
+            </DropdownMenuItem>
+          );
+        })}
 
         {/* Create */}
 
         <DropdownMenuItem >
           <Link
-            href="/dashboard/workspaces/new"
+            href="/workspace"
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -92,6 +112,17 @@ export function WorkspaceSwitcher({
             Create Workspace
           </Link>
         </DropdownMenuItem>
+
+        {/* Manage */}
+        <DropdownMenuItem>
+          <Link href="/settings">
+            <div className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Manage Workspace
+            </div>
+          </Link>
+        </DropdownMenuItem>
+
       </DropdownMenuContent>
     </DropdownMenu>
   );

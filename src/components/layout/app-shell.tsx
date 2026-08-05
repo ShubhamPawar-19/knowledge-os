@@ -8,6 +8,11 @@ import type {
 interface AppShellProps {
   user: DashboardUser;
   workspace: DashboardWorkspace;
+  workspaces: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
   children: React.ReactNode;
 }
 
@@ -15,13 +20,14 @@ export function AppShell({
   user,
   workspace,
   children,
+  workspaces,
 }: AppShellProps) {
   return (
     <div className="flex h-screen overflow-hidden">
       <AppSidebar
         user={user}
         workspace={workspace}
-        workspaceId={workspace.id}
+        workspaces={workspaces}
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">

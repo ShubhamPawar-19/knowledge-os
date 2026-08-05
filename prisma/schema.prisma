@@ -22,6 +22,9 @@ model User {
   ownedWorkspaces Workspace[]       @relation("WorkspaceOwner")
   memberships     WorkspaceMember[]
 
+  activeWorkspaceId String?
+  activeWorkspace   Workspace? @relation( "ActiveWorkspace", fields: [activeWorkspaceId], references: [id] )
+
   aiConfig UserAIConfig?
   apiKeys  UserAPIKey[]
 
@@ -98,6 +101,8 @@ model Workspace {
 
   image       String?
   description String?
+
+  activeUsers User[] @relation("ActiveWorkspace")
 
   ownerId String
   owner   User   @relation("WorkspaceOwner", fields: [ownerId], references: [id])

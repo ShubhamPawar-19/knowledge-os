@@ -13,13 +13,17 @@ import type {
 interface AppSidebarProps {
     user: DashboardUser;
     workspace: DashboardWorkspace;
-    workspaceId: string;
+    workspaces: {
+        id: string;
+        name: string;
+        slug: string;
+    }[];
 }
 
 export function AppSidebar({
     user,
     workspace,
-    workspaceId
+    workspaces,
 }: AppSidebarProps) {
     return (
         <aside className="flex h-full w-64 flex-col border-r bg-background">
@@ -28,13 +32,16 @@ export function AppSidebar({
             </div>
 
             <div className="border-b p-2">
-                <WorkspaceSwitcher workspace={workspace} />
+                <WorkspaceSwitcher
+                    workspace={workspace}
+                    workspaces={workspaces}
+                />
                 <div className=" p-2">
                     <Navigation />
                 </div>
             </div>
             <div className="border-b p-2">
-                <NewChatButton workspaceId={workspaceId} />
+                <NewChatButton workspaceId={workspace.id} />
             </div>
 
             <div className="flex-1 overflow-y-auto">
