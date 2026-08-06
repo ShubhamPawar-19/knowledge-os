@@ -1,37 +1,38 @@
-import { ChevronDown } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/src/components/ui/collapsible";
+"use client";
 
-import { listConversations } from "../queries/list-conversations";
+import { useQuery } from "@tanstack/react-query";
 import { ConversationList } from "./conversation-list";
+import { ChatSidebarContent } from "./chat-sidebar-content";
 
-interface Props {
-  workspaceId: string;
+
+interface Props{
+workspaceId:string;
 }
 
-export async function ChatSidebar({
-  workspaceId,
-}: Props) {
-  const conversations = await listConversations(
-    workspaceId,
-  );
 
-  return (
-    <Collapsible defaultOpen>
-      <CollapsibleTrigger className="hover:bg-muted flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium">
-        <span>Recents</span>
+export function ChatSidebar({
+workspaceId
+}:Props){
 
-        <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
-      </CollapsibleTrigger>
 
-      <CollapsibleContent className="mt-1">
-        <ConversationList
-          conversations={conversations}
-        />
-      </CollapsibleContent>
-    </Collapsible>
-  );
+const {data=[]}=useQuery({
+queryKey:["conversations",workspaceId],
+queryFn:async()=>{
+
+const res=await fetch(
+`/api/conversations?workspaceId=${workspaceId}`
+);
+
+return res.json();
+
+}
+
+});
+
+console.log("React Query conversations:", data);
+return (
+  <ChatSidebarContent
+    conversations={data}
+  />
+);
 }

@@ -1,5 +1,7 @@
 interface RetrievedChunk {
   id: string;
+  documentId: string;
+  documentName: string;
   content: string;
   metadata: unknown;
 }
@@ -10,7 +12,7 @@ export class PromptBuilderService {
     chunks: RetrievedChunk[],
   ) {
     const context = chunks
-      .map((chunk, index) => {
+      .map((chunk) => {
         const page =
           typeof chunk.metadata === "object" &&
           chunk.metadata !== null &&
@@ -19,61 +21,56 @@ export class PromptBuilderService {
             : undefined;
 
         return `
-Document ${index + 1}
+========================================
+Document: ${chunk.documentName}
 ${page ? `Page: ${page}` : ""}
+Chunk ID: ${chunk.id}
 
 ${chunk.content}
 `;
       })
-      .join("\n-------------------------\n");
+      .join("\n");
 
     return `
-You are KnowledgeOS, an AI assistant that answers questions using the user's uploaded documents.
+You are KnowledgeOS, an AI assistant that helps users understand and work with their documents.
 
 ## Rules
 
-- Follow the user's instructions exactly.
-- Match the requested response format (one word, one line, bullet points, detailed explanation, etc.).
+- Answer naturally and directly.
+- Follow the user's requested format.
 - Be concise unless the user asks for more detail.
-- Never reveal or describe your reasoning process.
-- Never output "thought", "analysis", "reasoning", or internal notes.
+- Never reveal your reasoning process.
+- Never output words like:
+  - thought
+  - thinking
+  - reasoning
+  - analysis
+  - scratchpad
+- Only output the final answer.
 
-## Using Documents
+## Document Usage
 
-- Use the uploaded documents as the primary source whenever they contain relevant information.
+- Use the retrieved document context as the primary source of truth.
+- Multiple context sections may come from the same document.
+- Never assume each context section is a different document.
 - Never invent, modify, or misquote document content.
-- If multiple documents disagree, say so instead of choosing one.
-
-## When Information Is Missing
-
-If the retrieved document context is empty or does not answer the user's question:
-
-- Answer using your general knowledge.
-- Do NOT claim the documents contain the answer.
-- Do NOT mention missing document information unless the user:
-  - explicitly asks for a document-based answer,
-  - asks for citations,
-  - asks "according to my documents",
-  - or asks where the answer came from.
-
-## Citations
-
-Only include document references when the user explicitly requests them.
+- If the retrieved context is insufficient, answer using general knowledge.
+- Never claim information came from a document unless it appears in the retrieved context.
 
 ======================
-CONTEXT
+DOCUMENT CONTEXT
 ======================
 
 ${context || "No relevant document context was retrieved."}
 
 ======================
-QUESTION
+USER QUESTION
 ======================
 
 ${question}
 
 ======================
-ANSWER
+FINAL ANSWER
 ======================
 `;
   }

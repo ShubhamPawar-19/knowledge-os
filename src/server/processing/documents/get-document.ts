@@ -5,6 +5,13 @@ export async function getDocument(documentId: string) {
     where: {
       id: documentId,
     },
+    include: {
+      workspace: {
+        select: {
+          ownerId: true,
+        },
+      },
+    },
   });
 
   if (!document) {

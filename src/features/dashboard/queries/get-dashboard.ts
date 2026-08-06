@@ -44,9 +44,9 @@ export async function getDashboardData() {
     db.conversation.count({
       where: {
         workspaceId,
+        deletedAt: null,
       },
     }),
-
     db.document.aggregate({
       where: {
         workspaceId,
@@ -69,6 +69,7 @@ export async function getDashboardData() {
     db.conversation.findMany({
       where: {
         workspaceId,
+        deletedAt: null,
       },
       orderBy: {
         updatedAt: "desc",

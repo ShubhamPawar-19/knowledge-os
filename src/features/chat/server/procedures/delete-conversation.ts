@@ -9,16 +9,26 @@ import { deleteConversationSchema } from "../schemas/create-conversation.schema"
 export const deleteConversation = protectedProcedure
   .input(deleteConversationSchema)
   .mutation(async ({ ctx, input }) => {
-    const conversation = await db.conversation.findUnique({
-      where: {
-        id: input.conversationId,
-      },
-      select: {
-        id: true,
-        workspaceId: true,
-        deletedAt: true,
-      },
-    });
+    console.log(
+  "Delete requested:",
+  input.conversationId,
+);
+
+const conversation = await db.conversation.findUnique({
+  where: {
+    id: input.conversationId,
+  },
+  select: {
+    id: true,
+    workspaceId: true,
+    deletedAt: true,
+  },
+});
+
+console.log(
+  "Conversation found:",
+  conversation,
+);
 
     if (!conversation || conversation.deletedAt) {
       throw new TRPCError({

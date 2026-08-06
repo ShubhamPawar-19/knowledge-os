@@ -1,11 +1,14 @@
-import { db } from "@/src/server/db";
 import "server-only";
 
+import { db } from "@/src/server/db";
 
-export async function getConversation(conversationId: string) {
-  return db.conversation.findUnique({
+export async function getConversation(
+  conversationId: string,
+) {
+  return db.conversation.findFirst({
     where: {
       id: conversationId,
+      deletedAt: null,
     },
     include: {
       messages: {

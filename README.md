@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KnowledgeOS
 
-## Getting Started
+AI-powered knowledge assistant that lets users upload documents and chat with their own knowledge base using RAG.
 
-First, run the development server:
+## Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+[Watch Demo](your-video-link)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![KnowledgeOS Demo](./assets/demo.gif)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Screenshots
 
-## Learn More
+### Dashboard
 
-To learn more about Next.js, take a look at the following resources:
+![Dashboard](./assets/dashboard.png)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Document Management
 
-## Deploy on Vercel
+![Documents](./assets/documents.png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### AI Chat with Citations
+
+![Chat](./assets/chat.png)
+
+
+### AI Configuration
+
+![Settings](./assets/settings.png)
+
+
+## Features
+
+- Upload and process documents
+- AI chat with your own knowledge base
+- Retrieval Augmented Generation (RAG)
+- Semantic search using embeddings
+- Source citations
+- Multi-workspace architecture
+- Multiple AI providers
+- Streaming responses
+
+
+## Architecture
+
+Upload Document
+↓
+Storage
+↓
+Text Extraction
+↓
+Chunking
+↓
+Embeddings
+↓
+Vector Database
+↓
+Retrieval
+↓
+LLM Response
+↓
+Citations
+
+
+## Tech Stack
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Prisma
+- PostgreSQL + pgvector
+- Supabase Storage
+- Inngest
+- AI SDK
+
+
+## Local Development
+
+...

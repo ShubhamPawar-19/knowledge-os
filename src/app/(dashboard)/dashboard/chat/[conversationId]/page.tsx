@@ -24,20 +24,25 @@ export default async function ConversationPage({
   }
 
   const initialMessages: UIMessage[] =
-    conversation.messages.map((message) => ({
-      id: message.id,
-      role:
-        message.role === "USER"
-          ? "user"
-          : "assistant",
-      parts: [
-        {
-          type: "text",
-          text: message.content,
-        },
-      ],
-    }));
+  conversation.messages.map((message) => ({
+    id: message.id,
+    role:
+      message.role === "USER"
+        ? "user"
+        : "assistant",
 
+    parts: [
+      {
+        type: "text",
+        text: message.content,
+      },
+    ],
+
+    metadata: {
+      citations: message.citations ?? [],
+    },
+  }));
+  
   return (
     <div className="flex h-full min-h-0 flex-col">
       <ChatHeader

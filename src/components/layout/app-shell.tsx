@@ -1,9 +1,12 @@
+import { SidebarProvider } from "./sidebar-provider";
 import { AppSidebar } from "./app-sidebar";
 
 import type {
   DashboardUser,
   DashboardWorkspace,
 } from "@/src/types/dashboard";
+import { SidebarContainer } from "./sidebar-container";
+import { TooltipProvider } from "@/src/components/ui/tooltip";
 
 interface AppShellProps {
   user: DashboardUser;
@@ -15,7 +18,6 @@ interface AppShellProps {
   }[];
   children: React.ReactNode;
 }
-
 export function AppShell({
   user,
   workspace,

@@ -10,72 +10,107 @@ import { RetrievalService } from "./retrieval.service";
 
 export class ChatService {
 
-static async streamResponse(
-    userId: string,
-    workspaceId: string,
-    question: string,
-) {
+    static async streamResponse(
+        userId: string,
+        workspaceId: string,
+        question: string,
+    ) {
 
 
-const config =
-await db.userAIConfig.findUnique({
-    where:{
-        userId,
-    },
-});
+        const config =
+            await db.userAIConfig.findUnique({
+                where: {
+                    userId,
+                },
+            });
 
 
-if(!config){
-    throw new Error(
-        "AI configuration missing"
-    );
-}
-
-
-
-const chunks =
-await RetrievalService.retrieve(
-  userId,
-  workspaceId,
-  question,
-);
+        if (!config) {
+            throw new Error(
+                "AI configuration missing"
+            );
+        }
 
 
 
-const prompt =
-PromptBuilderService.build(
-    question,
-    chunks,
-);
+        const chunks = await RetrievalService.retrieve(
+            userId,
+            workspaceId,
+            question,
+        );
+
+        const citations = [
+            ...new Map(
+                chunks.map((chunk) => {
+                    const pageNumber =
+                        typeof chunk.metadata === "object" &&
+                            chunk.metadata !== null &&
+                            "pageNumber" in chunk.metadata
+                            ? (chunk.metadata as { pageNumber?: number }).pageNumber
+                            : undefined;
+
+                    return [
+                        `${chunk.documentId}-${pageNumber ?? "unknown"}`,
+                        {
+                            documentId: chunk.documentId,
+                            documentName: chunk.documentName,
+                            pageNumber,
+                        },
+                    ];
+                }),
+            ).values(),
+        ];
+
+console.log("Chunks:", chunks);
+
+console.log("Citations:", citations);
+
+        const prompt =
+            PromptBuilderService.build(
+                question,
+                chunks,
+            );
 
 
 
-const model =
-await getChatModel(
-    userId,
-    config.chatProvider,
-    config.chatModel,
-);
+        const model = await getChatModel(
+            userId,
+            config.chatProvider,
+            config.chatModel,
+        );
 
+        const stream = streamText({
+            model,
 
+            system: `
+You are KnowledgeOS AI Assistant.
 
-return streamText({
+Answer naturally and accurately.
 
-    model,
+Use the uploaded documents whenever they contain relevant information.
 
-    system:
-    "You are KnowledgeOS AI assistant. Answer using uploaded documents.",
+Never reveal your reasoning process.
 
-    prompt,
+Never output words like:
+- thought
+- thinking
+- reasoning
+- analysis
+- scratchpad
 
-    temperature:
-    config.temperature,
+Only output the final answer.
+`,
 
-    maxOutputTokens:
-    config.maxTokens,
+            prompt,
 
-});
+            temperature: config.temperature,
 
-}
+            maxOutputTokens: config.maxTokens,
+        });
 
+        return {
+            stream,
+            citations,
+        };
+    }
 }

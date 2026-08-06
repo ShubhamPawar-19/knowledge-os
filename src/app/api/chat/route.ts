@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
         status: 401,
       });
     }
+
     const body = await request.json();
 
     const { messages, conversationId } = body;
@@ -62,10 +63,10 @@ export async function POST(request: NextRequest) {
     );
 
     void TitleService.generateConversationTitle(
-  session.user.id,
-  conversationId,
-  question,
-);
+      session.user.id,
+      conversationId,
+      question,
+    );
 
     const conversation = await db.conversation.findUnique({
       where: {
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
         session.user.id,
         conversation.workspaceId,
         question,
-      )
+      );
     } catch (error) {
       console.error("Failed to generate AI response:", error);
 
@@ -101,7 +102,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return result.toUIMessageStreamResponse({
+    const { stream, citations } = result;
+
+    return stream.toUIMessageStreamResponse({
       onFinish: async ({ responseMessage }) => {
         const assistantText = responseMessage.parts
           .filter((part) => part.type === "text")
@@ -116,6 +119,7 @@ export async function POST(request: NextRequest) {
           conversationId,
           "ASSISTANT",
           assistantText,
+          citations,
         );
       },
     });

@@ -18,7 +18,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
+
 import { switchWorkspace } from "@/src/features/workspaces/actions/switch-workspace";
+import { useSidebar } from "@/src/components/layout/sidebar-provider";
+import { cn } from "@/src/lib/utils";
 
 interface WorkspaceSwitcherProps {
   workspace: DashboardWorkspace;
@@ -28,11 +31,19 @@ interface WorkspaceSwitcherProps {
     slug: string;
   }[];
 }
+
+
 export function WorkspaceSwitcher({
   workspace,
   workspaces,
 }: WorkspaceSwitcherProps) {
+
   const router = useRouter();
+
+  const {
+    collapsed,
+  } = useSidebar();
+
 
   async function handleWorkspaceSwitch(
     workspaceId: string,
@@ -41,29 +52,33 @@ export function WorkspaceSwitcher({
 
     router.refresh();
   }
+
+
   return (
     <DropdownMenu>
+
       <DropdownMenuTrigger>
         <div
           className="
-            flex items-center justify-between
-            rounded-lg border px-3 py-2 gap-2
-            text-sm font-medium
-            transition-colors
-            hover:bg-muted
-          "
+    flex items-center justify-center
+    rounded-lg border px-3 py-2
+    hover:bg-muted
+    transition
+    "
         >
-          <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10">
-              <Building2 className="h-4 w-4 text-primary" />
-            </div>
 
-            <span className="truncate">
-              {workspace.name}
-            </span>
-          </div>
+          <Building2 className="h-4 w-4 text-primary" />
 
-          <ChevronsUpDown className="h-4 w-4 text-muted-foreground " />
+          {!collapsed && (
+            <>
+              <span className="ml-2 truncate">
+                {workspace.name}
+              </span>
+
+              <ChevronsUpDown className="ml-auto h-4 w-4 text-muted-foreground" />
+            </>
+          )}
+
         </div>
       </DropdownMenuTrigger>
 
@@ -72,18 +87,27 @@ export function WorkspaceSwitcher({
         align="start"
         className="w-64"
       >
-        {/* Current Workspaces */}
 
         {workspaces.map((item) => {
-          const isActive = item.id === workspace.id;
+
+          const isActive =
+            item.id === workspace.id;
+
 
           return (
             <DropdownMenuItem
               key={item.id}
-              onClick={() => handleWorkspaceSwitch(item.id)}
-              className="flex items-center justify-between cursor-pointer"
+              onClick={() =>
+                handleWorkspaceSwitch(item.id)
+              }
+              className="
+              flex cursor-pointer items-center 
+              justify-between
+              "
             >
+
               <div className="flex flex-col">
+
                 <span className="font-medium">
                   {item.name}
                 </span>
@@ -91,39 +115,65 @@ export function WorkspaceSwitcher({
                 <span className="text-xs text-muted-foreground">
                   {item.slug}
                 </span>
+
               </div>
 
-              {item.id === workspace.id && (
-                <Check className="h-4 w-4 text-primary" />
+
+              {isActive && (
+                <Check
+                  className="
+                  h-4 w-4 text-primary
+                  "
+                />
               )}
+
             </DropdownMenuItem>
           );
+
         })}
 
-        {/* Create */}
 
-        <DropdownMenuItem >
+
+        <DropdownMenuItem>
+
           <Link
             href="/workspace"
-            className="flex items-center gap-2"
+            className="
+            flex items-center gap-2
+            "
           >
+
             <Plus className="h-4 w-4" />
 
             Create Workspace
+
           </Link>
+
         </DropdownMenuItem>
 
-        {/* Manage */}
+
+
+
         <DropdownMenuItem>
-          <Link href="/settings">
-            <div className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Manage Workspace
-            </div>
+
+          <Link
+            href="/settings"
+            className="
+            flex items-center gap-2
+            "
+          >
+
+            <Settings className="h-4 w-4" />
+
+            Manage Workspace
+
           </Link>
+
         </DropdownMenuItem>
+
 
       </DropdownMenuContent>
+
     </DropdownMenu>
   );
 }

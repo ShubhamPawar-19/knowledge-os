@@ -4,16 +4,15 @@ import {
   useEffect,
   useRef,
   useState,
-} from "react";import { useRouter } from "next/navigation";
+} from "react"; import { useRouter } from "next/navigation";
 import {
   DefaultChatTransport,
   type UIMessage,
 } from "ai";
 import { useChat } from "@ai-sdk/react";
-import { ArrowUp, Square } from "lucide-react";
-
-import { Button } from "@/src/components/ui/button";
-import { Textarea } from "@/src/components/ui/textarea";
+import { ChatInput } from "./chat-input";
+import { MessageItem } from "./message-item";
+import { ThinkingIndicator } from "./thinking-indicator";
 
 interface Props {
   conversationId: string;
@@ -28,7 +27,7 @@ export function Chat({
 
   const [input, setInput] = useState("");
   const bottomRef =
-  useRef<HTMLDivElement>(null);
+    useRef<HTMLDivElement>(null);
   const [hasRefreshed, setHasRefreshed] =
     useState(false);
 
@@ -70,30 +69,28 @@ export function Chat({
   ]);
 
   useEffect(() => {
-  bottomRef.current?.scrollIntoView({
-    behavior: "smooth",
-  });
-}, [messages, status]);
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages, status]);
 
-  async function onSubmit(
-    e: React.FormEvent<HTMLFormElement>,
-  ) {
-    e.preventDefault();
-
+  async function handleSubmit() {
     if (
       !input.trim() ||
       status === "streaming"
     ) {
       return;
     }
-const text = input;
 
-setInput("");
-
-await sendMessage({
-  text,
-});
+    const text = input;
+    setInput("");
+    await sendMessage({
+      text,
+    });
   }
+  const isThinking =
+    status === "submitted" ||
+    status === "streaming";
 
   return (
     <div className="flex h-full flex-col">
@@ -104,90 +101,26 @@ await sendMessage({
           </div>
         ) : (
           messages.map((message) => (
-            <div key={message.id}>
-              <strong>
-                {message.role === "user"
-                  ? "You"
-                  : "AI"}
-              </strong>
-
-              {message.parts.map(
-                (part, index) => {
-                  if (part.type !== "text") {
-                    return null;
-                  }
-
-                  return (
-                    <p
-                      key={index}
-                      className="whitespace-pre-wrap"
-                    >
-                      {part.text}
-                    </p>
-                  );
-                },
-              )}
-            </div>
+            <MessageItem
+              key={message.id}
+              message={message}
+            />
           ))
+        )}
+        {isThinking && (
+          <ThinkingIndicator />
         )}
         <div ref={bottomRef} />
       </div>
 
-      <form
-        onSubmit={onSubmit}
-        className="border-t p-4"
-      >
-        <div className="flex items-end gap-2 rounded-2xl border p-2">
-          <Textarea
-            value={input}
-            onChange={(e) =>
-              setInput(e.target.value)
-            }
-            placeholder="Ask about your documents..."
-            className="min-h-13 resize-none border-0 shadow-none focus-visible:ring-0"
-            onKeyDown={(e) => {
-              if (
-                e.key === "Enter" &&
-                !e.shiftKey
-              ) {
-                e.preventDefault();
-                (
-                  e.currentTarget
-                    .form as HTMLFormElement
-                )?.requestSubmit();
-              }
-            }}
-          />
+      <ChatInput
+        input={input}
+        onInputChange={setInput}
+        status={status}
+        onStop={stop}
+        onSubmit={handleSubmit}
+      />
 
-          <Button
-            type={
-              status === "streaming"
-                ? "button"
-                : "submit"
-            }
-            size="icon"
-            className="h-10 w-10 rounded-full"
-            disabled={
-              status !== "streaming" &&
-              !input.trim()
-            }
-            onClick={() => {
-              if (status === "streaming") {
-                stop();
-              }
-            }}
-          >
-            {status === "streaming" ? (
-              <Square
-                size={16}
-                fill="currentColor"
-              />
-            ) : (
-              <ArrowUp size={18} />
-            )}
-          </Button>
-        </div>
-      </form>
     </div>
   );
 }

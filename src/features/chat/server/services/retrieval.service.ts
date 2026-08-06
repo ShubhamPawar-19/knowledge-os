@@ -6,6 +6,7 @@ import { db } from "@/src/server/db";
 interface RetrievedChunk {
   id: string;
   documentId: string;
+  documentName: string;
   content: string;
   metadata: Prisma.JsonValue;
   similarity: number;
@@ -29,19 +30,21 @@ export class RetrievalService {
   const vector = `[${embedding.join(",")}]`;
 
   const chunks = await db.$queryRaw<RetrievedChunk[]>`
-    SELECT
-      id,
-      "documentId",
-      content,
-      metadata,
-      1 - (embedding <=> ${vector}::vector) AS similarity
-    FROM "DocumentChunk"
-    WHERE "workspaceId" = ${workspaceId}
-      AND (1 - (embedding <=> ${vector}::vector)) > ${SIMILARITY_THRESHOLD}
-    ORDER BY embedding <=> ${vector}::vector
-    LIMIT ${limit};
-  `;
-
+  SELECT
+    dc.id,
+    dc."documentId",
+    d.name AS "documentName",
+    dc.content,
+    dc.metadata,
+    1 - (dc.embedding <=> ${vector}::vector) AS similarity
+  FROM "DocumentChunk" dc
+  INNER JOIN "Document" d
+    ON d.id = dc."documentId"
+  WHERE dc."workspaceId" = ${workspaceId}
+    AND (1 - (dc.embedding <=> ${vector}::vector)) > ${SIMILARITY_THRESHOLD}
+  ORDER BY dc.embedding <=> ${vector}::vector
+  LIMIT ${limit};
+`;
   return chunks;
 }
 }

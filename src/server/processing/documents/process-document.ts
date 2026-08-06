@@ -37,7 +37,10 @@ export async function processDocumentPipeline(
         const chunks = chunkDocument(cleaned);
 
         // Embed
-        const embeddedChunks = await embedChunks(chunks);
+        const embeddedChunks = await embedChunks(
+            document.workspace.ownerId,
+            chunks,
+        );
 
         // Save
         await saveChunks(

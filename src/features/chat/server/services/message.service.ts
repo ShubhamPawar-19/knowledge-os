@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { db } from "@/src/server/db";
 
 export class MessageService {
@@ -5,6 +6,7 @@ export class MessageService {
     conversationId: string,
     role: "USER" | "ASSISTANT",
     content: string,
+    citations?: Prisma.InputJsonValue,
   ) {
     if (!content.trim()) {
       return null;
@@ -16,6 +18,7 @@ export class MessageService {
           conversationId,
           role,
           content,
+          citations: citations ?? undefined,
         },
       });
 

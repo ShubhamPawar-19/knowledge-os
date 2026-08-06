@@ -91,13 +91,19 @@ export function ConversationControls({
     }
 
     async function onDelete() {
-        await remove(conversationId);
-        setDeleteOpen(false);
-    }
+    console.log(
+        "Deleting conversation ID:",
+        conversationId,
+    );
+
+    await remove(conversationId);
+
+    setDeleteOpen(false);
+}
 
     return (
         <>
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex w-full justify-between">
                 <div className="min-w-0 flex-1">
                     {editing ? (
                         <Input
@@ -178,7 +184,6 @@ export function ConversationControls({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-
             <AlertDialog
                 open={deleteOpen}
                 onOpenChange={setDeleteOpen}

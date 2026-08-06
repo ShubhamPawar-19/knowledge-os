@@ -12,12 +12,14 @@ export function ChatHeader({
   title,
 }: ChatHeaderProps) {
   return (
-    <div className="border-b px-6 py-4">
-      <ConversationControls
-        conversationId={conversationId}
-        title={title}
-        variant="header"
-      />
-    </div>
+    <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <div className="flex h-14 items-center px-4 sm:px-6">
+        <ConversationControls
+          conversationId={conversationId}
+          title={title}
+          variant="header"
+        />
+      </div>
+    </header>
   );
 }

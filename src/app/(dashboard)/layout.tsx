@@ -5,6 +5,8 @@ import { getCurrentSession } from "@/src/lib/auth-session";
 import { getCurrentWorkspace } from "@/src/features/workspaces/queries";
 import { getUserWorkspaces } from "@/src/features/workspaces/queries/get-user-workspaces";
 import { Providers } from "@/src/trpc/provider";
+import { SidebarProvider } from "@/src/components/layout/sidebar-provider";
+import { TooltipProvider } from "@/src/components/ui/tooltip";
 
 export default async function DashboardLayout({
   children,
@@ -33,13 +35,17 @@ export default async function DashboardLayout({
 
   return (
     <Providers>
+      <TooltipProvider>
+      <SidebarProvider>
       <AppShell
         user={user}
         workspace={workspace}
         workspaces={workspaces}
       >
-        {children}
+          {children}
       </AppShell>
+      </SidebarProvider>
+      </TooltipProvider>
     </Providers>
   );
 }
