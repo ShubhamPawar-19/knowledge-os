@@ -5,6 +5,8 @@ import { Search } from "lucide-react";
 
 import { Input } from "@/src/components/ui/input";
 import { DocumentGrid } from "./document-grid";
+import { UploadDocumentButton } from "./upload-document-button";
+import { UploadDocumentDialog } from "./upload-document-dialog";
 
 interface DocumentsViewProps {
   documents: any[];
@@ -14,7 +16,7 @@ export function DocumentsView({
   documents,
 }: DocumentsViewProps) {
   const [query, setQuery] = useState("");
-
+  const [open, setOpen] = useState(false);
   const filteredDocuments = useMemo(() => {
     return documents.filter((document) =>
       document.originalName
@@ -35,6 +37,15 @@ export function DocumentsView({
           className="pl-9"
         />
       </div>
+      <div className="mt-6">
+        <UploadDocumentButton
+          onClick={() => setOpen(true)}
+        />
+      </div>
+      <UploadDocumentDialog
+        open={open}
+        onOpenChange={setOpen}
+      />
 
       {filteredDocuments.length === 0 ? (
         <div className="text-muted-foreground py-12 text-center">

@@ -17,12 +17,12 @@ export function useCreateConversation() {
 
       toast.success("Conversation created.");
 
-      router.push(`/dashboard/chat/${conversation.id}`);
-
-      router.refresh();
+      router.push(`/chats/${conversation.id}`);
     } catch (error) {
-      console.error(error);
+      console.error("Create conversation failed:", error);
       toast.error("Failed to create conversation.");
+
+      throw error;
     }
   }
 

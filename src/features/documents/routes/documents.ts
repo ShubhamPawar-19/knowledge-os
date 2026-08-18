@@ -3,7 +3,7 @@ export function documentRoute(
   pageNumber?: number,
 ) {
   const base =
-    `/dashboard/documents/${documentId}`;
+    `/documents/${documentId}`;
 
   if (!pageNumber) {
     return base;

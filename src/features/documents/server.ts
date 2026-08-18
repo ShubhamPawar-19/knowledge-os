@@ -1,5 +1,5 @@
 import { requireCurrentWorkspace } from "@/src/features/workspaces/server";
-import { getDocuments } from "@/src/server/services/documents";
+import { getDocuments } from "@/src/server/services/documents/get-documents";
 
 export async function getWorkspaceDocuments(userId: string) {
   const workspace = await requireCurrentWorkspace(userId);
