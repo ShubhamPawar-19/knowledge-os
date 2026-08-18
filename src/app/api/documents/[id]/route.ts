@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/src/server/auth";
-import { deleteDocument } from "@/src/server/services/documents";
+import { deleteDocument } from "@/src/server/services/documents/delete-document";
 
 export async function DELETE(
   request: Request,

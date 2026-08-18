@@ -1,6 +1,6 @@
 import type { EmbeddedChunk } from "./types";
-
 import { db } from "../../db";
+import { Prisma } from "@prisma/client";
 
 export async function saveChunks(
   documentId: string,
@@ -18,11 +18,24 @@ export async function saveChunks(
       },
     });
 
-    for (const chunk of chunks) {
+    const values = chunks.map((chunk) => {
       const embedding = `[${chunk.embedding.join(",")}]`;
 
-      await tx.$executeRawUnsafe(
-        `
+      return Prisma.sql`(
+        gen_random_uuid()::text,
+        ${documentId},
+        ${workspaceId},
+        ${chunk.content},
+        ${chunk.chunkIndex},
+        ${chunk.tokenCount},
+        ${JSON.stringify(chunk.metadata)}::jsonb,
+        ${embedding}::vector,
+        NOW()
+      )`;
+    });
+
+    await tx.$executeRaw(
+      Prisma.sql`
         INSERT INTO "DocumentChunk"
         (
           id,
@@ -35,27 +48,8 @@ export async function saveChunks(
           embedding,
           "createdAt"
         )
-        VALUES
-        (
-          gen_random_uuid()::text,
-          $1,
-          $2,
-          $3,
-          $4,
-          $5,
-          $6::jsonb,
-          $7::vector,
-          NOW()
-        )
-        `,
-        documentId,
-        workspaceId,
-        chunk.content,
-        chunk.chunkIndex,
-        chunk.tokenCount,
-        JSON.stringify(chunk.metadata),
-        embedding,
-      );
-    }
+        VALUES ${Prisma.join(values)}
+      `,
+    );
   });
 }

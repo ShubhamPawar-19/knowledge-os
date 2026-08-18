@@ -6,7 +6,7 @@ import {
   protectedProcedure,
 } from "../trpc";
 import { requireCurrentWorkspace } from "@/src/features/workspaces/server";
-import { uploadDocument } from "../../services/documents";
+import { uploadDocument } from "../../services/documents/upload-document";
 
 export const documentsRouter = createTRPCRouter({
   upload: protectedProcedure

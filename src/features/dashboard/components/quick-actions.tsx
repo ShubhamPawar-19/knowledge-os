@@ -26,7 +26,7 @@ export function QuickActions() {
 
       <CardContent className="grid gap-4 md:grid-cols-2">
         <Link
-          href="/dashboard/chat/new"
+          href="/chats/"
           className="group hover:border-primary/30 hover:bg-muted/50 rounded-xl border p-5 transition-all duration-200 hover:-translate-y-1"
         >
           <div className="flex items-start justify-between">
@@ -49,7 +49,7 @@ export function QuickActions() {
         </Link>
 
         <Link
-          href="/dashboard/documents"
+          href="/documents/"
           className="group hover:border-primary/30 hover:bg-muted/50 rounded-xl border p-5 transition-all duration-200 hover:-translate-y-1"
         >
           <div className="flex items-start justify-between">

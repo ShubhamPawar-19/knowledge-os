@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/src/server/auth";
-import { uploadDocument } from "@/src/server/services/documents";
-
+import { uploadDocument } from "@/src/server/services/documents/upload-document";
 export async function POST(request: Request) {
   try {
     const session = await auth.api.getSession({
